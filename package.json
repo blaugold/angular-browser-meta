@@ -1,10 +1,16 @@
 {
   "name": "angular-browser-meta",
   "version": "0.0.0",
-  "description": "",
-  "keywords": [],
+  "description": "Set meta tags and title from resolved router Data.",
+  "keywords": [
+    "meta",
+    "angular2",
+    "angular",
+    "title"
+  ],
   "main": "index.js",
   "module": "index.js",
+  "typings": "index.d.ts",
   "engines": {
     "node": ">=5.0.0"
   },
