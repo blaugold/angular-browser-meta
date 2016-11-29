@@ -3,8 +3,10 @@ const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
 
-const coverage = process.env['COVERAGE'];
-console.log('Running tests with coverage!');
+const coverage = !!process.env['COVERAGE'];
+if (coverage) {
+    console.log('Running tests with coverage!');
+}
 
 const reporters = ['mocha'];
 
@@ -66,15 +68,10 @@ module.exports = function (karma) {
                 extensions: ['.ts', '.js']
             },
 
-            output: {
-                // sourcemap support for IntelliJ/Webstorm
-                devtoolModuleFilenameTemplate: '[absolute-resource-path]',
-                devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
-            },
-
             module: {
                 rules,
             },
+
             plugins: [
                 new webpack.ContextReplacementPlugin(
                     /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,

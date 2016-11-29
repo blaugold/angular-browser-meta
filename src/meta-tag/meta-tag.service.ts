@@ -1,30 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import {
-  Router,
-  ActivatedRoute,
-  NavigationEnd,
-  ActivatedRouteSnapshot,
-  Data
-} from '@angular/router';
+import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
-import { isEmpty, compact, merge, forEach } from 'lodash';
+import { compact, merge, forEach } from 'lodash';
 
 import { MetaTagData } from './meta-tag-data';
-import { MetaElementService } from '../core';
+import { MetaElementService, RouterDataService } from '../core';
 
 export interface TitleFactory {
   (baseTitle: string, curTitle: string): string
-}
-
-export interface RouteDataBundle {
-  route: ActivatedRoute;
-  data: Data;
-}
-
-export interface RouteMetaBundle {
-  route: ActivatedRoute;
-  meta: MetaTagData;
 }
 
 export class MetaTagModuleConfig {
@@ -66,15 +50,14 @@ export class MetaTagService {
   private overriddenData: MetaTagData;
 
   constructor(public config: MetaTagModuleConfig,
-              private router: Router,
               private metaElem: MetaElementService,
-              private title: Title) {
-    const rootSrc           = this.getRootActivatedRoute().do(() => this.reset());
-    const primaryPathSrc    = this.getPrimaryPathFromRoot(rootSrc);
-    const metaBundlePathSrc = primaryPathSrc.switchMap(path => this.mapRoutesToMetaBundles(path));
-    const metadata          = metaBundlePathSrc.map(path => this.mergePath(path));
+              private title: Title,
+              private routerData: RouterDataService) {
+    const $path            = this.routerData.$path.do(() => this.reset());
+    const $metaTagDataPath = $path.switchMap(() => this.getMetaTagData(this.routerData.$data));
+    const $metaTagData     = $metaTagDataPath.map(path => this.mergePath(path));
 
-    metadata.subscribe(metadata => this.update(metadata));
+    $metaTagData.subscribe(metadata => this.update(metadata));
   }
 
   reset() {
@@ -92,19 +75,17 @@ export class MetaTagService {
   }
 
   /** @internal */
-  mergePath(path: RouteMetaBundle[]): MetaTagData {
-    const dataArr = compact(path.map(bundle => bundle.meta));
-
-    const mergedData = dataArr.reduce((acc, curData, index) => {
+  mergePath(path: MetaTagData[]): MetaTagData {
+    const mergedData = path.reduce((acc, curData, index) => {
       switch (curData.mergeWhen) {
         case 'always':
           return mergeData(acc, curData);
         case 'never':
-          return isLastItem(index, dataArr) ? curData : acc;
+          return isLastItem(index, path) ? curData : acc;
         case 'parent':
-          return !isLastItem(index, dataArr) ? mergeData(acc, curData) : curData;
+          return !isLastItem(index, path) ? mergeData(acc, curData) : curData;
         case 'child':
-          return isLastItem(index, dataArr) ? mergeData(acc, curData) : acc;
+          return isLastItem(index, path) ? mergeData(acc, curData) : acc;
       }
     }, this.config.baseData);
 
@@ -148,38 +129,10 @@ export class MetaTagService {
     this._removeProperty(property);
   }
 
-  private getPrimaryPathFromRoot(rootSrc: Observable<ActivatedRoute>): Observable<ActivatedRoute[]> {
-    return rootSrc.map(root => {
-      const routeTail = new PrimaryRouteTailWalker();
-      walkRouteTree(routeTail, root);
-      const curRoute = routeTail.primaryRouteTail;
-      return curRoute ? curRoute.pathFromRoot : [];
-    });
-  }
-
-  private mapRoutesToDataBundles(path: ActivatedRoute[]): Observable<RouteDataBundle[]> {
-    const dataSrc = isEmpty(path) ? Observable.of([]) : Observable.from(path)
-      .map(route => route.data)
-      .combineAll<Data[]>();
-
-    return dataSrc
-      .map<RouteDataBundle[]>(dataArray => dataArray
-        .map<RouteDataBundle>((data, index) => ({ route: path[index], data }))
-      );
-  }
-
-  private mapRoutesToMetaBundles(path: ActivatedRoute[]): Observable<RouteMetaBundle[]> {
-    return this.mapRoutesToDataBundles(path)
-      .map(dataPath => dataPath
-        .map<RouteMetaBundle>(
-          bundle => ({ route: bundle.route, meta: bundle.data[this.config.dataProp] }))
-      );
-  }
-
-  private getRootActivatedRoute(): Observable<ActivatedRoute> {
-    return this.router.events
-      .filter(event => event instanceof NavigationEnd)
-      .map(() => this.router.routerState.root);
+  private getMetaTagData($data: Observable<Data[]>): Observable<MetaTagData[]> {
+    return $data
+      .map(path => path.map(data => data[this.config.dataProp]))
+      .map(compact);
   }
 
   private _setTitle(title: string) {
@@ -259,38 +212,4 @@ function mergeOverrides(cur: MetaTagData, overrides: MetaTagData): MetaTagData {
 
 function isLastItem(index, array) {
   return index === array.length - 1;
-}
-
-interface ActivatedRouteTreeVisitor {
-  visitRoute(activatedRoute: ActivatedRoute,
-             activatedRouteSnapshot: ActivatedRouteSnapshot);
-}
-
-/**
- * Walks a visitor over ActivatedRoute.
- * If visitor returns true children of this route won't be visited.
- */
-function walkRouteTree(visitor: ActivatedRouteTreeVisitor,
-                       curRoute: ActivatedRoute) {
-  const skipBranch = visitor.visitRoute(curRoute, curRoute.snapshot);
-  if (!skipBranch) {
-    curRoute.children.forEach(child => walkRouteTree(visitor, child));
-  }
-}
-
-/**
- * Finds the route for which all parents and it self are on a primary outlet and is
- * the last in the overall path.
- */
-class PrimaryRouteTailWalker implements ActivatedRouteTreeVisitor {
-  primaryRouteTail: ActivatedRoute;
-
-  visitRoute(activatedRoute: ActivatedRoute,
-             activatedRouteSnapshot: ActivatedRouteSnapshot) {
-    if (activatedRoute.outlet !== 'primary') {
-      // Skip non primary route
-      return true;
-    }
-    this.primaryRouteTail = activatedRoute;
-  }
 }

@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser'
 import { RouterTestingModule } from '@angular/router/testing'
 
 import { MetaTagService, MetaTagModuleConfig } from './meta-tag.service'
-import { MetaElementService } from '../core'
+import { MetaElementService, RouterDataService } from '../core'
 import { MetaTagData } from './meta-tag-data'
 
 const ROUTES = () => [
@@ -80,6 +80,7 @@ const ROUTES = () => [
 
 class MetaElementServiceMock {
   add() {}
+
   remove() {}
 }
 
@@ -88,7 +89,7 @@ class TitleMock {
 }
 
 describe('MetaTagService', () => {
-  let browserMeta: MetaTagService;
+  let metaTag: MetaTagService;
   let router: Router;
   let titleMock: TitleMock;
   let metaElemMock: MetaElementServiceMock;
@@ -107,30 +108,32 @@ describe('MetaTagService', () => {
           baseData: new MetaTagData({ title: 'Base' })
         })
         },
-        MetaTagService
+        MetaTagService,
+        RouterDataService
       ],
     });
 
-    browserMeta  = TestBed.get(MetaTagService);
+    metaTag      = TestBed.get(MetaTagService);
     router       = TestBed.get(Router);
     titleMock    = TestBed.get(Title);
     metaElemMock = TestBed.get(MetaElementService);
+
+    spyOn(titleMock, 'setTitle');
+    spyOn(metaElemMock, 'add');
+    spyOn(metaElemMock, 'remove');
   });
 
   it('should be instantiated', () => {
-    expect(browserMeta).toBeDefined();
+    expect(metaTag).toBeDefined();
   });
 
   it('should set title', fakeAsync(() => {
-    spyOn(titleMock, 'setTitle');
     createRoot(router, RootComponent);
 
     expect(titleMock.setTitle).toHaveBeenCalledWith('Base');
   }));
 
   it('should set name tags', fakeAsync(() => {
-    spyOn(metaElemMock, 'add');
-
     const fixture = createRoot(router, RootComponent);
 
     router.navigateByUrl('/all');
@@ -141,8 +144,6 @@ describe('MetaTagService', () => {
   }));
 
   it('should set httpEquiv tags', fakeAsync(() => {
-    spyOn(metaElemMock, 'add');
-
     const fixture = createRoot(router, RootComponent);
 
     router.navigateByUrl('/all');
@@ -153,8 +154,6 @@ describe('MetaTagService', () => {
   }));
 
   it('should set property tags', fakeAsync(() => {
-    spyOn(metaElemMock, 'add');
-
     const fixture = createRoot(router, RootComponent);
 
     router.navigateByUrl('/all');
@@ -165,35 +164,32 @@ describe('MetaTagService', () => {
   }));
 
   it('should reset dom when meta data changes', fakeAsync(() => {
-    spyOn(metaElemMock, 'remove');
-    browserMeta.reset();
-    browserMeta.update(new MetaTagData({
-      name: { a: 'a' },
+    metaTag.reset();
+    metaTag.update(new MetaTagData({
+      name:      { a: 'a' },
       httpEquiv: { a: 'a' },
-      property: { a: 'a' },
+      property:  { a: 'a' },
     }));
-    browserMeta.update(new MetaTagData({}));
+    metaTag.update(new MetaTagData({}));
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Name.a"');
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.HttpEquiv.a"');
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Property.a"');
   }));
 
   it('should reset dom when route changes', fakeAsync(() => {
-    spyOn(metaElemMock, 'remove');
-    browserMeta.reset();
-    browserMeta.update(new MetaTagData({
-      name: { a: 'a' },
+    metaTag.reset();
+    metaTag.update(new MetaTagData({
+      name:      { a: 'a' },
       httpEquiv: { a: 'a' },
-      property: { a: 'a' },
+      property:  { a: 'a' },
     }));
-    browserMeta.reset();
+    metaTag.reset();
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Name.a"');
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.HttpEquiv.a"');
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Property.a"');
   }));
 
   it('should use primary route', fakeAsync(() => {
-    spyOn(titleMock, 'setTitle');
     const fixture = createRoot(router, RootComponent);
     router.navigateByUrl('/(aux:/aux)');
     advance(fixture);
@@ -203,48 +199,44 @@ describe('MetaTagService', () => {
   }));
 
   it('should keep overridden metadata when meta data changes', () => {
-    spyOn(metaElemMock, 'add');
-    browserMeta.reset();
+    metaTag.reset();
 
-    browserMeta.update(new MetaTagData({ name: { a: 'a' }, }));
+    metaTag.update(new MetaTagData({ name: { a: 'a' }, }));
     expect(metaElemMock.add)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.a', name: 'a', content: 'a' });
 
-    browserMeta.set('a', 'b');
+    metaTag.set('a', 'b');
     expect(metaElemMock.add)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.a', name: 'a', content: 'b' });
 
-    browserMeta.update(new MetaTagData({}));
+    metaTag.update(new MetaTagData({}));
     expect(metaElemMock.add)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.a', name: 'a', content: 'b' });
   });
 
-  it('should reset overridden metadata when route changes',  () => {
-    spyOn(metaElemMock, 'add');
-    browserMeta.reset();
+  it('should reset overridden metadata when route changes', () => {
+    metaTag.reset();
 
-    browserMeta.set('a', 'b');
+    metaTag.set('a', 'b');
     expect(metaElemMock.add)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.a', name: 'a', content: 'b' });
 
-    browserMeta.reset();
-    browserMeta.update(new MetaTagData());
+    metaTag.reset();
+    metaTag.update(new MetaTagData());
     expect(metaElemMock.add).toHaveBeenCalledTimes(1);
   });
 
   it('should support mergeWhen:"never"', fakeAsync(() => {
-    browserMeta.config.baseData.name = { 'base': 'base' };
-    const metaBundlePath             = [
-      {
-        meta: new MetaTagData({
-          name:      { a: 'a' },
-          httpEquiv: { a: 'a' },
-          property:  { a: 'a' }
-        })
-      }
+    metaTag.config.baseData.name = { 'base': 'base' };
+    const dataPath               = [
+      new MetaTagData({
+        name:      { a: 'a' },
+        httpEquiv: { a: 'a' },
+        property:  { a: 'a' }
+      })
     ] as any;
 
-    const merged = browserMeta.mergePath(metaBundlePath);
+    const merged = metaTag.mergePath(dataPath);
 
     expect(merged.name).toEqual({ a: 'a', base: 'base' });
     expect(merged.httpEquiv).toEqual({ a: 'a' });
@@ -252,57 +244,53 @@ describe('MetaTagService', () => {
   }));
 
   it('should support mergeWhen:"never"', () => {
-    const neverMeta  = new MetaTagData({ mergeWhen: 'never' });
-    const parentMeta = new MetaTagData({ name: { parent: 'parent' } });
-    const merged     = browserMeta.mergePath([{ meta: parentMeta }, { meta: neverMeta }] as any);
+    const neverData  = new MetaTagData({ mergeWhen: 'never' });
+    const parentData = new MetaTagData({ name: { parent: 'parent' } });
+
+    const merged = metaTag.mergePath([parentData, neverData]);
+
     expect(merged.name).toEqual({})
   });
 
   it('should support mergeWhen:"child"', () => {
-    const parentMeta     = new MetaTagData({ name: { parent: 'parent' } });
-    const childMeta      = new MetaTagData({ mergeWhen: 'child', name: { child: 'child' } });
-    const grandChildMeta = new MetaTagData({ name: { grandChild: 'grandChild' } });
-    const mergedAsChild  = browserMeta.mergePath([
-      { meta: parentMeta },
-      { meta: childMeta }
-    ] as any);
-    const mergedAsParent = browserMeta.mergePath([
-      { meta: parentMeta },
-      { meta: childMeta },
-      { meta: grandChildMeta }
-    ] as any);
+    const parentData     = new MetaTagData({ name: { parent: 'parent' } });
+    const childData      = new MetaTagData({ mergeWhen: 'child', name: { child: 'child' } });
+    const grandChildData = new MetaTagData({ name: { grandChild: 'grandChild' } });
+
+    const mergedAsChild  = metaTag.mergePath([parentData, childData]);
+    const mergedAsParent = metaTag.mergePath([parentData, childData, grandChildData]);
+
     expect(mergedAsChild.name).toEqual({ parent: 'parent', child: 'child' });
     expect(mergedAsParent.name).toEqual({ parent: 'parent', grandChild: 'grandChild' });
   });
 
   it('should support mergeWhen:"parent"', () => {
-    const parentMeta     = new MetaTagData({ name: { parent: 'parent' } });
-    const childMeta      = new MetaTagData({ mergeWhen: 'parent', name: { child: 'child' } });
-    const grandChildMeta = new MetaTagData({ name: { grandChild: 'grandChild' } });
-    const mergedAsChild  = browserMeta.mergePath([
-      { meta: parentMeta },
-      { meta: childMeta }
-    ] as any);
-    const mergedAsParent = browserMeta.mergePath([
-      { meta: parentMeta },
-      { meta: childMeta },
-      { meta: grandChildMeta }
-    ] as any);
+    const parentData     = new MetaTagData({ name: { parent: 'parent' } });
+    const childData      = new MetaTagData({ mergeWhen: 'parent', name: { child: 'child' } });
+    const grandChildData = new MetaTagData({ name: { grandChild: 'grandChild' } });
+
+    const mergedAsChild  = metaTag.mergePath([parentData, childData]);
+    const mergedAsParent = metaTag.mergePath([parentData, childData, grandChildData]);
+
     expect(mergedAsChild.name).toEqual({ child: 'child' });
     expect(mergedAsParent.name)
       .toEqual({ parent: 'parent', child: 'child', grandChild: 'grandChild' });
   });
 
   it('should concat title of current route with base', () => {
-    const curMeta = new MetaTagData({ title: 'cur' });
-    const merged  = browserMeta.mergePath([{ meta: curMeta },] as any);
+    const curData = new MetaTagData({ title: 'cur' });
+
+    const merged = metaTag.mergePath([curData]);
+
     expect(merged.title).toEqual('cur | Base');
   });
 
   it('should use title of current route when factory is null', () => {
-    browserMeta.config = new MetaTagModuleConfig({ titleFactory: null });
-    const curMeta      = new MetaTagData({ title: 'cur' });
-    const merged       = browserMeta.mergePath([{ meta: curMeta },] as any);
+    metaTag.config = new MetaTagModuleConfig({ titleFactory: null });
+    const curData  = new MetaTagData({ title: 'cur' });
+
+    const merged = metaTag.mergePath([curData]);
+
     expect(merged.title).toEqual('cur');
   });
 });

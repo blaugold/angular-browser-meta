@@ -14,7 +14,7 @@
     "doc": "npm run typedoc -- --options typedoc.json index.ts",
     "upload-coverage": "coveralls < coverage/lcov.info",
     "karma": "karma start",
-    "test": "export COVERAGE=true; npm run karma -- --single-run",
+    "test": "COVERAGE=true npm run karma -- --single-run",
     "copy": "cpy package.json README.md release",
     "ngc": "ngc -p tsconfig.aot.json",
     "clean:pre": "rimraf release",

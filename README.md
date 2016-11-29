@@ -9,6 +9,7 @@
 ## Usage
 
 ```typescript
+import { NgModule } from '@angular/core'
 import { BrowserMetaModule } from 'angular-browser-meta'
 
 @NgModule({
