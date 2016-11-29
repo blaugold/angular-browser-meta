@@ -1,5 +1,4 @@
 import { NgModule, ModuleWithProviders } from '@angular/core'
-import { Title } from '@angular/platform-browser'
 import { SchemaService, WebsiteSchemaService, BreadcrumbSchemaService } from '../schemas'
 import { MetaTagService, MetaTagModuleConfig } from './meta-tag.service'
 import { BMCoreModule } from '../core'
@@ -18,7 +17,6 @@ export class MetaTagModule {
           provide:  MetaTagModuleConfig,
           useValue: config
         },
-        Title,
         MetaTagService,
         SchemaService,
         WebsiteSchemaService,

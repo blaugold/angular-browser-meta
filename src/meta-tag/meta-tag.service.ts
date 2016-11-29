@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { compact, merge, forEach } from 'lodash';
@@ -7,37 +6,17 @@ import { compact, merge, forEach } from 'lodash';
 import { MetaTagData } from './meta-tag-data';
 import { MetaElementService, RouterDataService } from '../core';
 
-export interface TitleFactory {
-  (baseTitle: string, curTitle: string): string
-}
-
 export class MetaTagModuleConfig {
   baseData?: MetaTagData;
-  titleFactory?: TitleFactory | null;
   dataProp?: string;
   idPrefix?: string;
 
-  constructor({ baseData, titleFactory, dataProp, idPrefix }: {
+  constructor({ baseData, dataProp, idPrefix }: {
     baseData?: MetaTagData;
-    titleFactory?: TitleFactory | null;
     dataProp?: string;
     idPrefix?: string;
   }) {
     this.baseData = baseData || new MetaTagData({});
-    if (titleFactory === undefined) {
-      this.titleFactory = (baseTitle, curTitle) => {
-        if (baseTitle === curTitle) {
-          return baseTitle;
-        }
-        return `${curTitle} | ${baseTitle}`
-      }
-    }
-    else if (titleFactory === null) {
-      this.titleFactory = (baseTitle, curTitle) => curTitle;
-    }
-    else {
-      this.titleFactory = titleFactory;
-    }
     this.dataProp = dataProp || 'meta';
     this.idPrefix = idPrefix || 'browser-meta';
   }
@@ -51,7 +30,6 @@ export class MetaTagService {
 
   constructor(public config: MetaTagModuleConfig,
               private metaElem: MetaElementService,
-              private title: Title,
               private routerData: RouterDataService) {
     const $path            = this.routerData.$path.do(() => this.reset());
     const $metaTagDataPath = $path.switchMap(() => this.getMetaTagData(this.routerData.$data));
@@ -76,7 +54,7 @@ export class MetaTagService {
 
   /** @internal */
   mergePath(path: MetaTagData[]): MetaTagData {
-    const mergedData = path.reduce((acc, curData, index) => {
+    return path.reduce((acc, curData, index) => {
       switch (curData.mergeWhen) {
         case 'always':
           return mergeData(acc, curData);
@@ -88,15 +66,6 @@ export class MetaTagService {
           return isLastItem(index, path) ? mergeData(acc, curData) : acc;
       }
     }, this.config.baseData);
-
-    mergedData.title = this.config.titleFactory(this.config.baseData.title, mergedData.title);
-
-    return mergedData;
-  }
-
-  setTitle(title: string) {
-    this.overriddenData.title = title;
-    this._setTitle(title);
   }
 
   set(name: string, content: string) {
@@ -133,11 +102,6 @@ export class MetaTagService {
     return $data
       .map(path => path.map(data => data[this.config.dataProp]))
       .map(compact);
-  }
-
-  private _setTitle(title: string) {
-    this.writtenData.title = title;
-    this.title.setTitle(title);
   }
 
   private _set(name: string, content: string) {
@@ -180,10 +144,6 @@ export class MetaTagService {
   }
 
   private setDOM(data: MetaTagData) {
-    if (data.title !== '') {
-      this._setTitle(data.title);
-    }
-
     forEach(data.name, (content, name) => this._set(name, content));
     forEach(data.httpEquiv, (content, httpEquiv) => this._setHttpEquiv(httpEquiv, content));
     forEach(data.property, (content, property) => this._setProperty(property, content));

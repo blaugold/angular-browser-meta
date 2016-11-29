@@ -1,7 +1,6 @@
 import { Component, NgModule, Type } from '@angular/core'
 import { TestBed, fakeAsync, tick, ComponentFixture } from '@angular/core/testing'
 import { Router } from '@angular/router'
-import { Title } from '@angular/platform-browser'
 import { RouterTestingModule } from '@angular/router/testing'
 
 import { MetaTagService, MetaTagModuleConfig } from './meta-tag.service'
@@ -14,7 +13,6 @@ const ROUTES = () => [
     component: TestComponent,
     data:      {
       meta: new MetaTagData({
-        title:     'all',
         name:      {
           all: 'all'
         },
@@ -32,7 +30,6 @@ const ROUTES = () => [
     component: TestComponent,
     data:      {
       meta: new MetaTagData({
-        title: 'parent',
         name:  {
           parent: 'parent'
         }
@@ -44,7 +41,6 @@ const ROUTES = () => [
         component: TestComponent,
         data:      {
           meta: new MetaTagData({
-            title:     'child',
             name:      {
               child: 'child'
             },
@@ -57,7 +53,6 @@ const ROUTES = () => [
             component: TestComponent,
             data:      {
               meta: new MetaTagData({
-                title:     'grandChild',
                 mergeWhen: 'never'
               })
             },
@@ -72,7 +67,6 @@ const ROUTES = () => [
     component: TestComponent,
     data:      {
       meta: new MetaTagData({
-        title: 'aux'
       })
     }
   },
@@ -84,14 +78,9 @@ class MetaElementServiceMock {
   remove() {}
 }
 
-class TitleMock {
-  setTitle() {}
-}
-
 describe('MetaTagService', () => {
   let metaTag: MetaTagService;
   let router: Router;
-  let titleMock: TitleMock;
   let metaElemMock: MetaElementServiceMock;
 
   beforeEach(() => {
@@ -101,11 +90,10 @@ describe('MetaTagService', () => {
         TestModule
       ],
       providers: [
-        { provide: Title, useClass: TitleMock },
         { provide: MetaElementService, useClass: MetaElementServiceMock },
         {
           provide: MetaTagModuleConfig, useValue: new MetaTagModuleConfig({
-          baseData: new MetaTagData({ title: 'Base' })
+          baseData: new MetaTagData({  })
         })
         },
         MetaTagService,
@@ -115,10 +103,8 @@ describe('MetaTagService', () => {
 
     metaTag      = TestBed.get(MetaTagService);
     router       = TestBed.get(Router);
-    titleMock    = TestBed.get(Title);
     metaElemMock = TestBed.get(MetaElementService);
 
-    spyOn(titleMock, 'setTitle');
     spyOn(metaElemMock, 'add');
     spyOn(metaElemMock, 'remove');
   });
@@ -126,12 +112,6 @@ describe('MetaTagService', () => {
   it('should be instantiated', () => {
     expect(metaTag).toBeDefined();
   });
-
-  it('should set title', fakeAsync(() => {
-    createRoot(router, RootComponent);
-
-    expect(titleMock.setTitle).toHaveBeenCalledWith('Base');
-  }));
 
   it('should set name tags', fakeAsync(() => {
     const fixture = createRoot(router, RootComponent);
@@ -187,15 +167,6 @@ describe('MetaTagService', () => {
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Name.a"');
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.HttpEquiv.a"');
     expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Property.a"');
-  }));
-
-  it('should use primary route', fakeAsync(() => {
-    const fixture = createRoot(router, RootComponent);
-    router.navigateByUrl('/(aux:/aux)');
-    advance(fixture);
-    expect(titleMock.setTitle).not.toHaveBeenCalledWith('aux | Base');
-    expect(titleMock.setTitle).toHaveBeenCalledWith('Base');
-    expect(titleMock.setTitle).toHaveBeenCalledTimes(2);
   }));
 
   it('should keep overridden metadata when meta data changes', () => {
@@ -275,23 +246,6 @@ describe('MetaTagService', () => {
     expect(mergedAsChild.name).toEqual({ child: 'child' });
     expect(mergedAsParent.name)
       .toEqual({ parent: 'parent', child: 'child', grandChild: 'grandChild' });
-  });
-
-  it('should concat title of current route with base', () => {
-    const curData = new MetaTagData({ title: 'cur' });
-
-    const merged = metaTag.mergePath([curData]);
-
-    expect(merged.title).toEqual('cur | Base');
-  });
-
-  it('should use title of current route when factory is null', () => {
-    metaTag.config = new MetaTagModuleConfig({ titleFactory: null });
-    const curData  = new MetaTagData({ title: 'cur' });
-
-    const merged = metaTag.mergePath([curData]);
-
-    expect(merged.title).toEqual('cur');
   });
 });
 
