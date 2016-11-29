@@ -18,11 +18,12 @@ export class MetaTagService {
               private routerData: RouterDataService) {
     initConfig(config);
 
-    const $path            = this.routerData.$path.do(() => this.reset());
-    const $metaTagDataPath = $path.switchMap(() => this.getMetaTagData(this.routerData.$data));
-    const $metaTagData     = $metaTagDataPath.map(path => this.mergePath(path));
-
-    $metaTagData.subscribe(metadata => this.update(metadata));
+    this.routerData
+      .$path
+      .do(() => this.reset())
+      .switchMap(() => this.getMetaTagData(this.routerData.$data))
+      .map(path => this.mergePath(path))
+      .subscribe(data => this.update(data));
   }
 
   reset() {
@@ -44,6 +45,7 @@ export class MetaTagService {
     return path.reduce((acc, curData, index) => {
       switch (curData.mergeWhen) {
         case 'always':
+        default:
           return mergeData(acc, curData);
         case 'never':
           return isLastItem(index, path) ? curData : acc;
@@ -88,7 +90,7 @@ export class MetaTagService {
   private getMetaTagData($data: Observable<Data[]>): Observable<MetaTagData[]> {
     return $data
       .map(path => path.map(data => data[this.config.dataProp]))
-      .map(compact);
+      .map(path => compact(path));
   }
 
   private _set(name: string, content: string) {

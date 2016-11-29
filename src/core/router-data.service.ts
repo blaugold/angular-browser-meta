@@ -16,7 +16,7 @@ export class RouterDataService {
 
   constructor(private router: Router) {
     this.$path = this.getPathObs().publishReplay(1).refCount();
-    this.$data = this.getDataObs(this.$path).share();
+    this.$data = this.getDataObs(this.$path).publishReplay(1).refCount();
   }
 
   private getPathObs(): Observable<ActivatedRoute[]> {
