@@ -83,5 +83,8 @@
   "bugs": {
     "url": "https://github.com/blaugold/angular-browser-meta/issues"
   },
-  "homepage": "https://github.com/blaugold/angular-browser-meta#readme"
+  "homepage": "https://github.com/blaugold/angular-browser-meta#readme",
+  "dependencies": {
+    "lodash": "^4.17.2"
+  }
 }
