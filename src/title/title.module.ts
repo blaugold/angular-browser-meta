@@ -11,9 +11,9 @@ import { TitleService } from './title.service'
   ]
 })
 export class TitleModule {
-  static forRoot(config: TitleModuleConfig): ModuleWithProviders {
+  static forRoot(config: TitleModuleConfig = {}): ModuleWithProviders {
     return {
-      ngModule: TitleModule,
+      ngModule:  TitleModule,
       providers: [
         { provide: titleModuleConfig, useValue: config },
         Title,

@@ -8,8 +8,8 @@ export const titleModuleConfig = new OpaqueToken('TitleModuleConfig');
 
 export interface TitleModuleConfig {
   defaultTitle?: string;
-  titleFactory: TitleFactory;
-  dataProp: string;
+  titleFactory?: TitleFactory;
+  dataProp?: string;
 }
 
 export function initConfig(config: TitleModuleConfig) {

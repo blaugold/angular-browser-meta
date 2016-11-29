@@ -1,3 +1,3 @@
-export * from './title-module-config';
-export * from './title.module';
-export * from './title.service';
+export { TitleModuleConfig, TitleFactory } from './title-module-config';
+export { TitleModule } from './title.module';
+export { TitleService } from './title.service';

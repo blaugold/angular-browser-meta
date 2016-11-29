@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core'
 
-import { MetaElementService, ScriptElementService, RouterDataService } from './'
+import { MetaElementService } from './meta-element.service'
+import { RouterDataService } from './router-data.service'
 
 @NgModule({
   providers: [
     MetaElementService,
-    ScriptElementService,
     RouterDataService
   ]
 })
 export class BMCoreModule {
-
 }

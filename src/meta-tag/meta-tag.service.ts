@@ -1,26 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { compact, merge, forEach } from 'lodash';
 
 import { MetaTagData } from './meta-tag-data';
 import { MetaElementService, RouterDataService } from '../core';
-
-export class MetaTagModuleConfig {
-  baseData?: MetaTagData;
-  dataProp?: string;
-  idPrefix?: string;
-
-  constructor({ baseData, dataProp, idPrefix }: {
-    baseData?: MetaTagData;
-    dataProp?: string;
-    idPrefix?: string;
-  }) {
-    this.baseData = baseData || new MetaTagData({});
-    this.dataProp = dataProp || 'meta';
-    this.idPrefix = idPrefix || 'browser-meta';
-  }
-}
+import { MetaTagModuleConfig, metaTagModuleConfig, initConfig } from './meta-tag-module-config'
 
 @Injectable()
 export class MetaTagService {
@@ -28,9 +13,11 @@ export class MetaTagService {
   private writtenData: MetaTagData;
   private overriddenData: MetaTagData;
 
-  constructor(public config: MetaTagModuleConfig,
+  constructor(@Inject(metaTagModuleConfig) public config: MetaTagModuleConfig,
               private metaElem: MetaElementService,
               private routerData: RouterDataService) {
+    initConfig(config);
+
     const $path            = this.routerData.$path.do(() => this.reset());
     const $metaTagDataPath = $path.switchMap(() => this.getMetaTagData(this.routerData.$data));
     const $metaTagData     = $metaTagDataPath.map(path => this.mergePath(path));

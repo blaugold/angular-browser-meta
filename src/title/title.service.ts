@@ -28,7 +28,7 @@ export class TitleService {
   }
 
   update(title: string) {
-    if (!this.titleOverridden) {
+    if (!this.titleOverridden && title !== undefined) {
       this._setTitle(title);
     }
   }
@@ -47,10 +47,16 @@ export class TitleService {
       .map(data => data[this.config.dataProp])
       .find(title => !!title);
 
+    const defaultTitle = this.config.defaultTitle;
+
     if (title) {
-      return this.config.titleFactory(this.config.defaultTitle, title);
+      if (defaultTitle) {
+        return this.config.titleFactory(defaultTitle, title);
+      } else {
+        return title;
+      }
     }
 
-    return this.config.defaultTitle;
+    return defaultTitle;
   }
 }

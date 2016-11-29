@@ -3,9 +3,10 @@ import { TestBed, fakeAsync, tick, ComponentFixture } from '@angular/core/testin
 import { Router } from '@angular/router'
 import { RouterTestingModule } from '@angular/router/testing'
 
-import { MetaTagService, MetaTagModuleConfig } from './meta-tag.service'
+import { MetaTagService } from './meta-tag.service'
 import { MetaElementService, RouterDataService } from '../core'
 import { MetaTagData } from './meta-tag-data'
+import { metaTagModuleConfig } from './meta-tag-module-config'
 
 const ROUTES = () => [
   {
@@ -30,7 +31,7 @@ const ROUTES = () => [
     component: TestComponent,
     data:      {
       meta: new MetaTagData({
-        name:  {
+        name: {
           parent: 'parent'
         }
       })
@@ -66,8 +67,7 @@ const ROUTES = () => [
     path:      'aux',
     component: TestComponent,
     data:      {
-      meta: new MetaTagData({
-      })
+      meta: new MetaTagData({})
     }
   },
 ];
@@ -91,11 +91,7 @@ describe('MetaTagService', () => {
       ],
       providers: [
         { provide: MetaElementService, useClass: MetaElementServiceMock },
-        {
-          provide: MetaTagModuleConfig, useValue: new MetaTagModuleConfig({
-          baseData: new MetaTagData({  })
-        })
-        },
+        { provide: metaTagModuleConfig, useValue: {} },
         MetaTagService,
         RouterDataService
       ],

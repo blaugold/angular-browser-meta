@@ -1,7 +1,8 @@
 import { NgModule, ModuleWithProviders } from '@angular/core'
-import { SchemaService, WebsiteSchemaService, BreadcrumbSchemaService } from '../schemas'
-import { MetaTagService, MetaTagModuleConfig } from './meta-tag.service'
+
+import { MetaTagService } from './meta-tag.service'
 import { BMCoreModule } from '../core'
+import { MetaTagModuleConfig, metaTagModuleConfig } from './meta-tag-module-config'
 
 @NgModule({
   imports: [
@@ -9,18 +10,12 @@ import { BMCoreModule } from '../core'
   ]
 })
 export class MetaTagModule {
-  static forRoot(config: MetaTagModuleConfig): ModuleWithProviders {
+  static forRoot(config: MetaTagModuleConfig = {}): ModuleWithProviders {
     return {
       ngModule:  MetaTagModule,
       providers: [
-        {
-          provide:  MetaTagModuleConfig,
-          useValue: config
-        },
+        { provide: metaTagModuleConfig, useValue: config },
         MetaTagService,
-        SchemaService,
-        WebsiteSchemaService,
-        BreadcrumbSchemaService,
       ]
     };
   }

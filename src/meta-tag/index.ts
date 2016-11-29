@@ -1,3 +1,4 @@
-export * from './meta-tag.module';
-export * from './meta-tag-data';
-export * from './meta-tag.service';
+export { MetaTagModule } from './meta-tag.module';
+export { MetaTagData } from './meta-tag-data';
+export { MetaTagService } from './meta-tag.service';
+export { MetaTagModuleConfig } from './meta-tag-module-config';

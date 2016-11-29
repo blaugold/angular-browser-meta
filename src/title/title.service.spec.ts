@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing'
 import { Title } from '@angular/platform-browser'
 import { Subject } from 'rxjs'
 
-import { TitleService, titleModuleConfig, TitleModuleConfig } from './'
 import { RouterDataService } from '../core'
+import { titleModuleConfig, TitleModuleConfig } from './title-module-config'
+import { TitleService } from './title.service'
 
 class TitleMock {
   setTitle() {}
