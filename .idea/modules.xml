@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/angular-firebase.iml" filepath="$PROJECT_DIR$/angular-firebase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/angular-browser-meta.iml" filepath="$PROJECT_DIR$/angular-browser-meta.iml" />
     </modules>
   </component>
 </project>

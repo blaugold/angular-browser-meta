@@ -1,13 +1,34 @@
-'use strict'
-const path = require('path')
-const fs = require('fs')
-const webpack = require('webpack')
+'use strict';
+const path = require('path');
+const fs = require('fs');
+const webpack = require('webpack');
 
-let firebaseConfig = process.env.FIREBASE_CONFIG ||
-    fs.readFileSync('./firebase.config.local.json', {encoding: 'utf8'})
+const coverage = process.env['COVERAGE'];
+console.log('Running tests with coverage!');
 
-if (firebaseConfig === '') {
-    throw new Error('Failed to load Firebase config.')
+const reporters = ['mocha'];
+
+if (coverage) {
+    reporters.push('karma-remap-istanbul')
+}
+
+const rules = [{
+    test: /\.ts$/,
+    loader: 'awesome-typescript-loader',
+    exclude: /node_modules/
+}];
+
+if (coverage) {
+    rules.push({
+        enforce: 'post',
+        test: /\.(ts|js)$/,
+        loader: 'sourcemap-istanbul-instrumenter-loader',
+        exclude: [
+            /\.(spec|e2e|bundle)\.ts$/,
+            /node_modules/
+        ],
+        query: {'force-sourcemap': true}
+    })
 }
 
 module.exports = function (karma) {
@@ -22,7 +43,7 @@ module.exports = function (karma) {
             'tests.bundle.ts': ['webpack']
         },
 
-        reporters: ['mocha', 'karma-remap-istanbul'],
+        reporters,
 
         remapIstanbulReporter: {
             reports: {
@@ -45,30 +66,25 @@ module.exports = function (karma) {
                 extensions: ['.ts', '.js']
             },
 
+            output: {
+                // sourcemap support for IntelliJ/Webstorm
+                devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+                devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
+            },
+
             module: {
-                loaders: [
-                    {
-                        test: /\.ts$/,
-                        loader: 'awesome-typescript',
-                        exclude: /node_modules/
-                    },
-                    {
-                        enforce: 'post',
-                        test: /\.(ts|js)$/,
-                        loader: 'istanbul-instrumenter',
-                        include: path.resolve(__dirname, 'src'),
-                        exclude: [
-                            /\.(spec|e2e|bundle)\.ts$/,
-                            /node_modules/
-                        ]
-                    }
-                ]
+                rules,
             },
             plugins: [
-                new webpack.DefinePlugin({
-                    firebaseConfig
+                new webpack.ContextReplacementPlugin(
+                    /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+                    path.resolve(__dirname, './src')
+                ),
+                new webpack.SourceMapDevToolPlugin({
+                    filename: null, // if no value is provided the sourcemap is inlined
+                    test: /\.(ts|js)($|\?)/i // process .js and .ts files only
                 })
             ]
         }
     })
-}
+};

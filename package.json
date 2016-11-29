@@ -1,13 +1,8 @@
 {
-  "name": "@blaugold/angular-firebase",
-  "version": "0.2.0",
-  "description": "Wrapper around Firebase JS-API for Angular 2 Apps.",
-  "keywords": [
-    "Firebase",
-    "Angular 2",
-    "Observable",
-    "RxJS"
-  ],
+  "name": "@blaugold/angular-browser-meta",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
   "main": "index.js",
   "module": "index.js",
   "engines": {
@@ -18,11 +13,10 @@
     "predoc": "rimraf docs",
     "doc": "npm run typedoc -- --options typedoc.json index.ts",
     "upload-coverage": "coveralls < coverage/lcov.info",
-    "fix": "cpy karma-remap-istanbul-fix/index.js node_modules/karma-remap-istanbul",
     "karma": "karma start",
-    "test": "npm run karma -- --single-run",
+    "test": "export COVERAGE=true; npm run karma -- --single-run",
     "copy": "cpy package.json README.md release",
-    "ngc": "ngc -p aot.tsconfig.json",
+    "ngc": "ngc -p tsconfig.aot.json",
     "clean:pre": "rimraf release",
     "clean:post": "rimraf src/**/*.ngfactory.ts",
     "prebuild": "npm run clean:pre",
@@ -32,11 +26,9 @@
   },
   "author": "Gabriel Terwesten <gabriel@terwesten.net>",
   "license": "MIT",
-  "dependencies": {
-    "firebase": "^3.5.3"
-  },
   "peerDependencies": {
     "@angular/core": "^2.1.2",
+    "@angular/router": "^3.1.2",
     "rxjs": "5.0.0-beta.12"
   },
   "devDependencies": {
@@ -47,25 +39,31 @@
     "@angular/platform-browser": "^2.1.2",
     "@angular/platform-browser-dynamic": "^2.1.2",
     "@angular/platform-server": "^2.1.2",
+    "@angular/router": "^3.1.2",
+    "@types/chai": "^3.4.34",
     "@types/jasmine": "^2.5.37",
     "@types/node": "^6.0.46",
     "awesome-typescript-loader": "^2.2.4",
+    "chai": "^3.5.0",
     "core-js": "^2.4.1",
     "coveralls": "^2.11.14",
     "cpy-cli": "^1.0.1",
-    "istanbul-instrumenter-loader": "^0.2.0",
     "jasmine": "^2.5.2",
+    "jasmine-core": "^2.5.2",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-mocha-reporter": "^2.2.0",
     "karma-remap-istanbul": "^0.2.1",
+    "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^1.8.0",
     "rimraf": "^2.5.4",
     "rxjs": "5.0.0-beta.12",
+    "source-map-loader": "^0.1.5",
+    "sourcemap-istanbul-instrumenter-loader": "^0.2.0",
     "standard-version": "^3.0.0",
     "typedoc": "^0.5.1",
-    "typescript": "^2.0.6",
+    "typescript": "2.0.x",
     "webpack": "^2.1.0-beta.25",
     "zone.js": "^0.6.26"
   },
@@ -74,10 +72,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blaugold/angular-firebase.git"
+    "url": "git+https://github.com/blaugold/angular-browser-meta.git"
   },
   "bugs": {
-    "url": "https://github.com/blaugold/angular-firebase/issues"
+    "url": "https://github.com/blaugold/angular-browser-meta/issues"
   },
-  "homepage": "https://github.com/blaugold/angular-firebase#readme"
+  "homepage": "https://github.com/blaugold/angular-browser-meta#readme"
 }
