@@ -39,7 +39,11 @@ module.exports = function (karma) {
 
         frameworks: ['jasmine'],
 
-        files: [{pattern: 'tests.bundle.ts', watched: false}],
+        mime: {
+            'application/javascript': ['ts']
+        },
+
+        files: ['tests.bundle.ts'],
 
         preprocessors: {
             'tests.bundle.ts': ['webpack']
