@@ -11,9 +11,6 @@
   "main": "index.js",
   "module": "index.js",
   "typings": "index.d.ts",
-  "engines": {
-    "node": ">=5.0.0"
-  },
   "scripts": {
     "typedoc": "typedoc",
     "predoc": "rimraf docs",
