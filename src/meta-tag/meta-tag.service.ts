@@ -1,7 +1,12 @@
 import { Injectable, Inject } from '@angular/core';
 import { Data } from '@angular/router';
-import { Observable } from 'rxjs';
-import { compact, merge, forEach } from 'lodash';
+import { Observable } from 'rxjs/Observable';
+import * as compact from 'lodash/compact'
+import * as merge from 'lodash/merge'
+import * as forEach from 'lodash/forEach'
+import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/switchMap'
+import 'rxjs/add/operator/do'
 
 import { MetaTagData } from './meta-tag-data';
 import { MetaElementService, RouterDataService } from '../core';

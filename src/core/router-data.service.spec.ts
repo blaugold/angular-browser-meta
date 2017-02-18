@@ -1,5 +1,5 @@
 import { NavigationEnd } from '@angular/router'
-import { Subject } from 'rxjs'
+import { Subject } from 'rxjs/Subject'
 import { RouterDataService } from './'
 
 describe('RouterDataService', () => {

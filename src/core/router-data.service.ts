@@ -6,7 +6,12 @@ import {
   ActivatedRoute
 } from '@angular/router'
 import { Injectable } from '@angular/core'
-import { Observable } from 'rxjs'
+import { Observable } from 'rxjs/Observable'
+import 'rxjs/add/operator/publishReplay'
+import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/filter'
+import 'rxjs/add/operator/switchMap'
+import 'rxjs/add/observable/combineLatest'
 
 @Injectable()
 export class RouterDataService {

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing'
 import { Title } from '@angular/platform-browser'
-import { Subject } from 'rxjs'
+import { Subject } from 'rxjs/Subject'
 
 import { RouterDataService } from '../core'
 import { titleModuleConfig, TitleModuleConfig } from './title-module-config'

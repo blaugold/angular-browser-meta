@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { getDOM } from '@angular/platform-browser/src/dom/dom_adapter';
-import { forEach } from 'lodash';
+import { Injectable } from '@angular/core'
+import { getDOM } from '@angular/platform-browser/src/dom/dom_adapter'
+import * as forEach from 'lodash/forEach'
 
 export interface MetaElementDefinition {
   charset?: string;
@@ -52,7 +52,7 @@ export class MetaElementService {
   }
 
   private createMetaElement(): HTMLMetaElement {
-    const el = this.dom.createElement('meta', this.dom.defaultDoc()) as HTMLMetaElement;
+    const el   = this.dom.createElement('meta', this.dom.defaultDoc()) as HTMLMetaElement;
     const head = this.getHead();
     this.dom.appendChild(head, el);
     return el;
