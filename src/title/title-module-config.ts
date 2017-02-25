@@ -1,10 +1,10 @@
-import { OpaqueToken } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
 export interface TitleFactory {
   (defaultTitle: string, curTitle?: string): string;
 }
 
-export const titleModuleConfig = new OpaqueToken('TitleModuleConfig');
+export const titleModuleConfig = new InjectionToken<TitleModuleConfig>('TitleModuleConfig');
 
 export interface TitleModuleConfig {
   defaultTitle?: string;

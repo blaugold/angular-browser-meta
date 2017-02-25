@@ -1,10 +1,10 @@
 import { Component, NgModule, Type } from '@angular/core'
+import { Meta } from '@angular/platform-browser'
 import { TestBed, fakeAsync, tick, ComponentFixture } from '@angular/core/testing'
 import { Router } from '@angular/router'
 import { RouterTestingModule } from '@angular/router/testing'
-
 import { MetaTagService } from './meta-tag.service'
-import { MetaElementService, RouterDataService } from '../core'
+import { RouterDataService } from '../core'
 import { MetaTagData } from './meta-tag-data'
 import { metaTagModuleConfig } from './meta-tag-module-config'
 
@@ -81,7 +81,7 @@ class MetaElementServiceMock {
 describe('MetaTagService', () => {
   let metaTag: MetaTagService;
   let router: Router;
-  let metaElemMock: MetaElementServiceMock;
+  let meta: Meta;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -90,19 +90,19 @@ describe('MetaTagService', () => {
         TestModule
       ],
       providers: [
-        { provide: MetaElementService, useClass: MetaElementServiceMock },
+        Meta,
         { provide: metaTagModuleConfig, useValue: {} },
         MetaTagService,
         RouterDataService
       ],
     });
 
-    metaTag      = TestBed.get(MetaTagService);
-    router       = TestBed.get(Router);
-    metaElemMock = TestBed.get(MetaElementService);
+    metaTag = TestBed.get(MetaTagService);
+    router  = TestBed.get(Router);
+    meta    = TestBed.get(Meta);
 
-    spyOn(metaElemMock, 'add');
-    spyOn(metaElemMock, 'remove');
+    spyOn(meta, 'addTag');
+    spyOn(meta, 'removeTag');
   });
 
   it('should be instantiated', () => {
@@ -115,7 +115,7 @@ describe('MetaTagService', () => {
     router.navigateByUrl('/all');
     advance(fixture);
 
-    expect(metaElemMock.add)
+    expect(meta.addTag)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.all', name: 'all', content: 'all' });
   }));
 
@@ -125,7 +125,7 @@ describe('MetaTagService', () => {
     router.navigateByUrl('/all');
     advance(fixture);
 
-    expect(metaElemMock.add)
+    expect(meta.addTag)
       .toHaveBeenCalledWith({ id: 'browser-meta.HttpEquiv.all', httpEquiv: 'all', content: 'all' });
   }));
 
@@ -135,7 +135,7 @@ describe('MetaTagService', () => {
     router.navigateByUrl('/all');
     advance(fixture);
 
-    expect(metaElemMock.add)
+    expect(meta.addTag)
       .toHaveBeenCalledWith({ id: 'browser-meta.Property.all', property: 'all', content: 'all' });
   }));
 
@@ -147,9 +147,9 @@ describe('MetaTagService', () => {
       property:  { a: 'a' },
     }));
     metaTag.update(new MetaTagData({}));
-    expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Name.a"');
-    expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.HttpEquiv.a"');
-    expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Property.a"');
+    expect(meta.removeTag).toHaveBeenCalledWith('id="browser-meta.Name.a"');
+    expect(meta.removeTag).toHaveBeenCalledWith('id="browser-meta.HttpEquiv.a"');
+    expect(meta.removeTag).toHaveBeenCalledWith('id="browser-meta.Property.a"');
   }));
 
   it('should reset dom when route changes', fakeAsync(() => {
@@ -160,24 +160,24 @@ describe('MetaTagService', () => {
       property:  { a: 'a' },
     }));
     metaTag.reset();
-    expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Name.a"');
-    expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.HttpEquiv.a"');
-    expect(metaElemMock.remove).toHaveBeenCalledWith('id="browser-meta.Property.a"');
+    expect(meta.removeTag).toHaveBeenCalledWith('id="browser-meta.Name.a"');
+    expect(meta.removeTag).toHaveBeenCalledWith('id="browser-meta.HttpEquiv.a"');
+    expect(meta.removeTag).toHaveBeenCalledWith('id="browser-meta.Property.a"');
   }));
 
   it('should keep overridden metadata when meta data changes', () => {
     metaTag.reset();
 
     metaTag.update(new MetaTagData({ name: { a: 'a' }, }));
-    expect(metaElemMock.add)
+    expect(meta.addTag)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.a', name: 'a', content: 'a' });
 
     metaTag.set('a', 'b');
-    expect(metaElemMock.add)
+    expect(meta.addTag)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.a', name: 'a', content: 'b' });
 
     metaTag.update(new MetaTagData({}));
-    expect(metaElemMock.add)
+    expect(meta.addTag)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.a', name: 'a', content: 'b' });
   });
 
@@ -185,12 +185,12 @@ describe('MetaTagService', () => {
     metaTag.reset();
 
     metaTag.set('a', 'b');
-    expect(metaElemMock.add)
+    expect(meta.addTag)
       .toHaveBeenCalledWith({ id: 'browser-meta.Name.a', name: 'a', content: 'b' });
 
     metaTag.reset();
     metaTag.update(new MetaTagData());
-    expect(metaElemMock.add).toHaveBeenCalledTimes(1);
+    expect(meta.addTag).toHaveBeenCalledTimes(1);
   });
 
   it('should support mergeWhen:"never"', fakeAsync(() => {

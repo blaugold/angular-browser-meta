@@ -1,8 +1,8 @@
-import { OpaqueToken } from '@angular/core'
+import { InjectionToken } from '@angular/core'
 
 import { MetaTagData } from './meta-tag-data'
 
-export const metaTagModuleConfig = new OpaqueToken('MetaTagModuleConfig');
+export const metaTagModuleConfig = new InjectionToken<MetaTagModuleConfig>('MetaTagModuleConfig');
 
 export interface MetaTagModuleConfig {
   baseData?: MetaTagData;

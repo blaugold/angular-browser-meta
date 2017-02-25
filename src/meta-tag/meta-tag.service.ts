@@ -1,16 +1,16 @@
-import { Injectable, Inject } from '@angular/core';
-import { Data } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import * as compact from 'lodash/compact'
-import * as merge from 'lodash/merge'
-import * as forEach from 'lodash/forEach'
+import { Injectable, Inject } from '@angular/core'
+import { Meta } from '@angular/platform-browser'
+import { Data } from '@angular/router'
+import { Observable } from 'rxjs/Observable'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/switchMap'
 import 'rxjs/add/operator/do'
-
-import { MetaTagData } from './meta-tag-data';
-import { MetaElementService, RouterDataService } from '../core';
+import { MetaTagData } from './meta-tag-data'
+import { RouterDataService } from '../core'
 import { MetaTagModuleConfig, metaTagModuleConfig, initConfig } from './meta-tag-module-config'
+import compact = require('lodash/compact')
+import merge = require('lodash/merge')
+import forEach = require('lodash/forEach')
 
 @Injectable()
 export class MetaTagService {
@@ -19,7 +19,7 @@ export class MetaTagService {
   private overriddenData: MetaTagData;
 
   constructor(@Inject(metaTagModuleConfig) public config: MetaTagModuleConfig,
-              private metaElem: MetaElementService,
+              private meta: Meta,
               private routerData: RouterDataService) {
     initConfig(config);
 
@@ -100,32 +100,32 @@ export class MetaTagService {
 
   private _set(name: string, content: string) {
     this.writtenData.name[name] = content;
-    this.metaElem.add({ id: this.getId('Name', name), name, content })
+    this.meta.addTag({ id: this.getId('Name', name), name, content });
   }
 
   private _remove(name: string) {
     delete this.writtenData.name[name];
-    this.metaElem.remove(this.getSelector('Name', name));
+    this.meta.removeTag(this.getSelector('Name', name));
   }
 
   private _setHttpEquiv(httpEquiv: string, content: string) {
     this.writtenData.httpEquiv[httpEquiv] = content;
-    this.metaElem.add({ id: this.getId('HttpEquiv', httpEquiv), httpEquiv, content })
+    this.meta.addTag({ id: this.getId('HttpEquiv', httpEquiv), httpEquiv, content })
   }
 
   private _removeHttpEquiv(httpEquiv: string) {
     delete this.writtenData.httpEquiv[httpEquiv];
-    this.metaElem.remove(this.getSelector('HttpEquiv', httpEquiv));
+    this.meta.removeTag(this.getSelector('HttpEquiv', httpEquiv));
   }
 
   private _setProperty(property: string, content: string) {
     this.writtenData.property[property] = content;
-    this.metaElem.add({ id: this.getId('Property', property), property, content })
+    this.meta.addTag({ id: this.getId('Property', property), property, content })
   }
 
   private _removeProperty(property: string) {
     delete this.writtenData.property[property];
-    this.metaElem.remove(this.getSelector('Property', property));
+    this.meta.removeTag(this.getSelector('Property', property));
   }
 
   private clearDOM() {
