@@ -44,7 +44,7 @@
     "@angular/router": "^4.0.0-rc.0",
     "@types/chai": "^3.4.35",
     "@types/jasmine": "^2.5.43",
-    "@types/lodash": "^4.14.53",
+    "@types/lodash-es": "^4.14.4",
     "@types/node": "^7.0.5",
     "awesome-typescript-loader": "^3.0.7",
     "chai": "^3.5.0",
@@ -82,6 +82,6 @@
   },
   "homepage": "https://github.com/blaugold/angular-browser-meta#readme",
   "dependencies": {
-    "lodash": "^4.17.4"
+    "lodash-es": "^4.17.4"
   }
 }

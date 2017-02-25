@@ -2,15 +2,15 @@ import { Injectable, Inject } from '@angular/core'
 import { Meta } from '@angular/platform-browser'
 import { Data } from '@angular/router'
 import { Observable } from 'rxjs/Observable'
+import compact from 'lodash-es/compact'
+import merge from 'lodash-es/merge'
+import forEach from 'lodash-es/forEach'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/switchMap'
 import 'rxjs/add/operator/do'
 import { MetaTagData } from './meta-tag-data'
 import { RouterDataService } from '../core'
 import { MetaTagModuleConfig, metaTagModuleConfig, initConfig } from './meta-tag-module-config'
-import compact = require('lodash/compact')
-import merge = require('lodash/merge')
-import forEach = require('lodash/forEach')
 
 @Injectable()
 export class MetaTagService {
