@@ -3,6 +3,7 @@ import { Meta } from '@angular/platform-browser'
 
 import { BMCoreModule } from '../core'
 import { MetaTagModuleConfig, metaTagModuleConfig } from './meta-tag-module-config'
+import { MetaTagService } from './'
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ export class MetaTagModule {
       ngModule:  MetaTagModule,
       providers: [
         { provide: metaTagModuleConfig, useValue: config },
-        Meta
+        Meta,
+        MetaTagService
       ]
     };
   }
