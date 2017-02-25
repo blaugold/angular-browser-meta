@@ -1,6 +1,6 @@
 {
   "name": "angular-browser-meta",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Set meta tags and title from resolved router Data.",
   "keywords": [
     "meta",

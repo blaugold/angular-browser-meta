@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.0"></a>
+# [0.1.0](https://github.com/blaugold/angular-browser-meta/compare/v0.0.4...v0.1.0) (2017-02-25)
+
+
+### Bug Fixes
+
+* **dep:** use lodash-es ([4e2c28b](https://github.com/blaugold/angular-browser-meta/commit/4e2c28b))
+
+
+### Features
+
+* **meta-tag:** use Meta service from [@angular](https://github.com/angular)/common ([274127b](https://github.com/blaugold/angular-browser-meta/commit/274127b))
+
+
+
 <a name="0.0.4"></a>
 ## [0.0.4](https://github.com/blaugold/angular-browser-meta/compare/v0.0.3...v0.0.4) (2017-02-18)
 
