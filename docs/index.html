@@ -65,12 +65,13 @@
 				<h2 id="angular-browser-meta">Angular Browser Meta</h2>
 				<p>This module sets Meta Tags and Title from the data property of Routers ActivatedRoute.
 					Updates happen when data or the route changes.
-				Overrides are possible by injecting this modules services in components or other services. </p>
+					Overrides are possible by injecting the <code>MetaTagService</code> or <code>TitleService</code> in components or other
+				services.</p>
 				<h2 id="installation">Installation</h2>
 				<pre><code>    npm i --<span class="hljs-built_in">save</span> angular-browser-<span class="hljs-built_in">meta</span>
 </code></pre><h2 id="usage">Usage</h2>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { NgModule, Component } from <span class="hljs-string">'@angular/core'</span>
-<span class="hljs-keyword">import</span> { TitleModule, MetaTagModule, TitleService, MetaTagService } from <span class="hljs-string">'angular-browser-meta'</span>
+<span class="hljs-keyword">import</span> { TitleModule, MetaTagModule, MetaTagService } from <span class="hljs-string">'angular-browser-meta'</span>
 
 @NgModule({
     imports: [
@@ -82,8 +83,8 @@
 
 @Component({ template: <span class="hljs-string">'&lt;router-outlet&gt;&lt;/router-outlet&gt;'</span> })
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppComponent {
-  <span class="hljs-comment">// Inject these services in your root component to start listening to router navigation.</span>
-  <span class="hljs-keyword">constructor</span>(titleService: TitleService, metaTagService: MetaTagService) {
+
+  <span class="hljs-keyword">constructor</span>(metaTagService: MetaTagService) {
     <span class="hljs-comment">// You can override the data from routes.</span>
     <span class="hljs-comment">// Updates from data resolvers will not reset overrides but navigation will. </span>
     metaTagService.set(<span class="hljs-string">'author'</span>, <span class="hljs-string">'Bob'</span>);
