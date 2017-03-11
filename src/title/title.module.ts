@@ -21,4 +21,7 @@ export class TitleModule {
       ],
     }
   }
+
+  // Inject `TitleService` to bootstrap it when this module is used.
+  constructor(public /** @internal */ titleService: TitleService) {}
 }

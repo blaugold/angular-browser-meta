@@ -2,7 +2,8 @@
 
 This module sets Meta Tags and Title from the data property of Routers ActivatedRoute.
 Updates happen when data or the route changes.
-Overrides are possible by injecting this modules services in components or other services. 
+Overrides are possible by injecting the `MetaTagService` or `TitleService` in components or other 
+services.
 
 ## Installation
 
@@ -14,7 +15,7 @@ Overrides are possible by injecting this modules services in components or other
 
 ```typescript
 import { NgModule, Component } from '@angular/core'
-import { TitleModule, MetaTagModule, TitleService, MetaTagService } from 'angular-browser-meta'
+import { TitleModule, MetaTagModule, MetaTagService } from 'angular-browser-meta'
 
 @NgModule({
     imports: [
@@ -26,8 +27,8 @@ export class AppModule {}
 
 @Component({ template: '<router-outlet></router-outlet>' })
 export class AppComponent {
-  // Inject these services in your root component to start listening to router navigation.
-  constructor(titleService: TitleService, metaTagService: MetaTagService) {
+ 
+  constructor(metaTagService: MetaTagService) {
     // You can override the data from routes.
     // Updates from data resolvers will not reset overrides but navigation will. 
     metaTagService.set('author', 'Bob');
