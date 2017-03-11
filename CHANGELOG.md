@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/blaugold/angular-browser-meta/compare/v0.1.1...v0.2.0) (2017-03-11)
+
+
+### Features
+
+* **modules:** create and start services when modules are used (no need to inject them in root cmp any more) ([c3357a7](https://github.com/blaugold/angular-browser-meta/commit/c3357a7))
+
+
+
 <a name="0.1.1"></a>
 ## [0.1.1](https://github.com/blaugold/angular-browser-meta/compare/v0.1.0...v0.1.1) (2017-02-25)
 
